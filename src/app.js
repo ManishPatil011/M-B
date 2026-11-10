@@ -24,7 +24,40 @@ function Dust() { return <div className="dust-field" aria-hidden="true">{Array.f
 
 function DoorScene({ opened, onOpen, reducedMotion }) {
   const scene = useRef(null);
-  const open = () => { if (opened) return; if (reducedMotion) { gsap.set(".door-panel.left", { rotateY: -94 }); gsap.set(".door-panel.right", { rotateY: 94 }); gsap.set(".palace-light", { opacity: 1 }); } else { gsap.timeline().to(".door-panel.left", { rotateY: -94, duration: 2.2, ease: "power3.inOut" }).to(".door-panel.right", { rotateY: 94, duration: 2.2, ease: "power3.inOut" }, "<").to(".palace-light", { opacity: 1, duration: 1.5 }, "<0.8").to(scene.current, { scale: 1.08, duration: 2.4, ease: "power2.inOut" }, "<"); } onOpen(true); };
+  const timeline = useRef(null);
+  const openedOnce = useRef(false);
+
+  useEffect(() => () => timeline.current?.kill(), []);
+
+  const open = () => {
+    if (openedOnce.current) return;
+    openedOnce.current = true;
+    const entrance = scene.current;
+    const button = entrance.querySelector(".open-button");
+    const copy = entrance.querySelector(".hero-copy");
+    const panels = entrance.querySelectorAll(".door-panel");
+    const light = entrance.querySelector(".palace-light");
+
+    if (reducedMotion) {
+      gsap.set(button, { autoAlpha: 0, y: -8, scale: 0.96 });
+      gsap.set(copy, { autoAlpha: 0, y: -34 });
+      gsap.set(panels[0], { rotateY: -94 });
+      gsap.set(panels[1], { rotateY: 94 });
+      gsap.set(light, { autoAlpha: 1 });
+      onOpen(true);
+      return;
+    }
+
+    timeline.current = gsap.timeline({ onComplete: () => onOpen(true) })
+      .to(button, { autoAlpha: 0, y: -14, scale: 0.92, duration: 0.45, ease: "power2.inOut" })
+      .to(copy, { autoAlpha: 0, y: -54, duration: 1.15, ease: "power3.inOut" }, "<0.18")
+      .to(light, { autoAlpha: 1, duration: 1.6, ease: "power2.out" }, "<0.35")
+      .to(panels[0], { rotateY: -94, duration: 2.35, ease: "power3.inOut" }, "<0.25")
+      .to(panels[1], { rotateY: 94, duration: 2.35, ease: "power3.inOut" }, "<")
+      .to(entrance, { scale: 1.06, duration: 2.35, ease: "power2.inOut" }, "<")
+      .to(entrance.querySelectorAll(".dust-field span"), { opacity: 0.95, duration: 1.1, stagger: 0.025 }, "<0.55");
+  };
+
   return <section className={`door-hero ${opened ? "is-open" : ""}`} ref={scene} data-testid="palace-entrance">
     <Dust /><div className="palace-light" />
     <div className="pillars pillar-left" /><div className="pillars pillar-right" />
@@ -34,7 +67,7 @@ function DoorScene({ opened, onOpen, reducedMotion }) {
       <p className="eyebrow reveal-line" data-testid="hero-eyebrow">A celebration of love</p>
       <h1 data-testid="hero-couple"><span>Madhushri</span><em>&amp;</em><span>Bharath</span></h1>
       <p className="hero-date" data-testid="hero-date">05 — 06 December · 2026</p>
-      <button className="open-button" onClick={open} data-testid="open-royal-invitation"><span>{opened ? "Entering the palace" : "Open the royal invitation"}</span><ArrowDown size={16} /></button>
+      <button className="open-button" onClick={open} disabled={openedOnce.current} data-testid="open-royal-invitation"><span>Open the royal invitation</span><ArrowDown size={16} /></button>
     </div><div className="scroll-cue">Scroll to enter <ArrowDown size={14} /></div>
   </section>;
 }
