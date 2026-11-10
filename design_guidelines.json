@@ -1,0 +1,40 @@
+{
+  "project_name": "Madhushri & Bharath Royal Palace Wedding Invitation",
+  "version": "1.0.0",
+  "archetype": "LUXURY & ROYAL HERITAGE (Archetype 5 + Custom Royal Indian Palace)",
+  "color_palette": {
+    "imperial_burgundy": "#350812",
+    "royal_maroon": "#560D20",
+    "antique_gold": "#C6A15B",
+    "champagne": "#E9D8AD",
+    "ivory": "#FFF8EA",
+    "deep_shadow": "#16050A",
+    "accent_diya": "#FFB703"
+  },
+  "typography": {
+    "headings": "Playfair Display, Cormorant Garamond, Serif",
+    "body": "Plus Jakarta Sans, Inter, sans-serif",
+    "accents": "Cinzel, Unbounded, Monospace for dates"
+  },
+  "image_urls": {
+    "palace_hallway": "https://images.unsplash.com/photo-1561042771-abb14f50b8f4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODB8MHwxfHNlYXJjaHwzfHxpbmRpYW4lMjByb3lhbCUyMHBhbGFjZSUyMGFyY2hpdGVjdHVyZSUyMHRlbXBsZSUyMG1hbmRhcHxlbnwwfHx8fDE3OTQyNDIwNzB8MA&ixlib=rb-4.1.0&q=85",
+    "palace_archway": "https://images.unsplash.com/photo-1600118569960-ea0f09f92d5b?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODB8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjByb3lhbCUyMHBhbGFjZSUyMGFyY2hpdGVjdHVyZSUyMHRlbXBsZSUyMG1hbmRhcHxlbnwwfHx8fDE3OTQyNDIwNzB8MA&ixlib=rb-4.1.0&q=85",
+    "marigold_garland": "https://images.unsplash.com/photo-1699764681875-dd04ce36b1c3?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMjd8MHwxfHNlYXJjaHwxfHxtYXJpZ29sZCUyMGZsb3dlciUyMHdlZGRpbmclMjBnYXJsYW5kJTIwaW5kaWFufGVufDB8fHx8MTc5NDI0MjA3M3ww&ixlib=rb-4.1.0&q=85",
+    "bride_decor": "https://images.unsplash.com/photo-1771992232118-c3f1011591f2?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMjd8MHwxfHNlYXJjaHwzfHxtYXJpZ29sZCUyMGZsb3dlciUyMHdlZGRpbmclMjBnYXJsYW5kJTIwaW5kaWFufGVufDB8fHx8MTc5NDI0MjA3M3ww&ixlib=rb-4.1.0&q=85"
+  },
+  "key_features": [
+    "Full-screen 3D Palace Entrance with Hinged Teakwood Doors, Brass Accents, Diya Glow & Particle Dust",
+    "Cinematic Royal Invitation Reveal with Silk-Maroon Texture & Rotating Gold Mandala",
+    "Two-Day Celebrations Chapter (05 Dec Wedding & 06 Dec Grand Reception) with Editable Cards",
+    "Venue Details & Interactive Map Placeholder with Editable Addresses",
+    "Cinematic Editorial Asymmetrical Gallery with Lightbox & Hover Zoom",
+    "Real-time Countdown to 05 December 2026",
+    "Interactive RSVP Form with Guest Count, Meal/Seating Preference, and Wishes",
+    "Smooth Scroll (Lenis), Framer Motion Entrance Animations, and WebGL Fallback"
+  ],
+  "accessibility_and_testing": {
+    "data_testid_convention": "kebab-case role-based testids on all interactive and key informational elements",
+    "reduced_motion": "Supported via CSS media queries and conditional Framer Motion states",
+    "contrast": "WCAG AA compliant gold/ivory text on deep imperial burgundy and royal maroon backgrounds"
+  }
+}

@@ -2,11 +2,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import "@/app.css";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas } from "@react-three/fiber";
 import { Sparkles } from "@react-three/drei";
 import gsap from "gsap";
 import Lenis from "lenis";
-import { ArrowDown, ArrowUpRight, ChevronDown, ChevronRight, MapPin, X } from "lucide-react";
+import { ArrowDown, ArrowUpRight, ChevronRight, MapPin, X } from "lucide-react";
 import { Toaster, toast } from "sonner";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
