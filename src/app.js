@@ -1,9 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import "@/app.css";
-import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { Sparkles } from "@react-three/drei";
 import gsap from "gsap";
 import Lenis from "lenis";
 import { ArrowDown, ArrowUpRight, ChevronDown, ChevronRight, MapPin, X } from "lucide-react";
@@ -23,7 +20,7 @@ const config = {
   ],
 };
 
-function Dust() { return <Canvas className="dust-canvas" camera={{ position: [0, 0, 4] }}><Sparkles count={160} scale={[14, 8, 4]} size={2} speed={0.25} color="#e9d8ad" /></Canvas>; }
+function Dust() { return <div className="dust-field" aria-hidden="true">{Array.from({ length: 34 }, (_, index) => <span key={index} style={{ "--i": index }} />)}</div>; }
 
 function DoorScene({ opened, onOpen, reducedMotion }) {
   const scene = useRef(null);
@@ -51,7 +48,21 @@ function App() {
   useEffect(() => { const query = window.matchMedia("(prefers-reduced-motion: reduce)"); const update = () => setReducedMotion(query.matches); update(); query.addEventListener?.("change", update); return () => query.removeEventListener?.("change", update); }, []);
   useEffect(() => { if (reducedMotion) return undefined; const lenis = new Lenis({ duration: 1.2, smoothWheel: true }); let raf; const tick = (t) => { lenis.raf(t); raf = requestAnimationFrame(tick); }; raf = requestAnimationFrame(tick); return () => { cancelAnimationFrame(raf); lenis.destroy(); }; }, [reducedMotion]);
   useEffect(() => { if (opened) window.setTimeout(() => document.querySelector("#home")?.scrollIntoView({ behavior: "smooth" }), 900); }, [opened]);
-  const submit = async (e) => { e.preventDefault(); try { await axios.post(`${API}/rsvp`, rsvp); toast.success("Your response has been received", { description: "We cannot wait to celebrate with you." }); e.target.reset(); } catch { toast.error("Please try again shortly"); } };
+  const submit = async (e) => {
+    e.preventDefault();
+    if (!process.env.REACT_APP_BACKEND_URL) {
+      toast.info("RSVP details are not connected yet", { description: "Please share your response with the family directly for now." });
+      return;
+    }
+    try {
+      const response = await fetch(`${API}/rsvp`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(rsvp) });
+      if (!response.ok) throw new Error("RSVP request failed");
+      toast.success("Your response has been received", { description: "We cannot wait to celebrate with you." });
+      e.target.reset();
+    } catch {
+      toast.error("We could not send your response", { description: "Please try again shortly or contact the family directly." });
+    }
+  };
   const eventData = useMemo(() => [{ day: "05", month: "December", title: "The Wedding Celebration", note: "Ceremonies and timings will be announced", icon: "I" }, { day: "06", month: "December", title: "The Grand Reception", note: "Celebration details will be announced", icon: "II" }], []);
   return <div className="site-shell"><Toaster theme="dark" position="bottom-center" />
     <DoorScene opened={opened} onOpen={setOpened} reducedMotion={reducedMotion} />
