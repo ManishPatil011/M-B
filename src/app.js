@@ -1,12 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "@/app.css";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowDown, ArrowUpRight, CalendarDays, MapPin, Music2, Sparkles, X } from "lucide-react";
-import { Toaster, toast } from "sonner";
 import "@/entrance.css";
 
 const config = {
-  couple: "Madhushri & Bharath",
+  couple: "Bharath & Madhushri",
   year: 2026,
   date: "05 — 06 December",
   gallery: [
@@ -32,13 +31,166 @@ function Reveal({ children, className = "", reducedMotion = false, delay = 0 }) 
   return <motion.div className={className} initial={reducedMotion ? false : { opacity: 0, y: 34, rotateX: 5 }} whileInView={reducedMotion ? undefined : { opacity: 1, y: 0, rotateX: 0 }} viewport={{ once: true, margin: "-70px" }} transition={reducedMotion ? undefined : { duration: 0.9, delay, ease: [0.22, 1, 0.36, 1] }}>{children}</motion.div>;
 }
 
+function ScratchSurface({ revealed, onComplete }) {
+  const canvasRef = useRef(null);
+  const sampleCanvasRef = useRef(null);
+  const lastPoint = useRef(null);
+  const isScratching = useRef(false);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const bounds = canvas.getBoundingClientRect();
+    const width = bounds.width;
+    const height = bounds.height;
+    const scale = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(width * scale);
+    canvas.height = Math.round(height * scale);
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("Unable to initialize the scratch card");
+    context.scale(scale, scale);
+
+    if (revealed) {
+      context.clearRect(0, 0, width, height);
+      return;
+    }
+
+    const foil = context.createLinearGradient(0, 0, width, height);
+    foil.addColorStop(0, "#eee0c7");
+    foil.addColorStop(.42, "#c8ae87");
+    foil.addColorStop(.7, "#f5e8d1");
+    foil.addColorStop(1, "#b99b70");
+    context.fillStyle = foil;
+    context.fillRect(0, 0, width, height);
+    context.globalAlpha = .18;
+    context.strokeStyle = "#fffaf1";
+    for (let x = -height; x < width; x += 16) {
+      context.beginPath();
+      context.moveTo(x, 0);
+      context.lineTo(x + height, height);
+      context.stroke();
+    }
+    context.globalAlpha = 1;
+    context.fillStyle = "#78593a";
+    context.font = "600 24px Georgia, serif";
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.fillText("✧ Scratch to reveal ✧", width / 2, height / 2);
+  }, [revealed]);
+
+  const eraseAt = (event) => {
+    const canvas = canvasRef.current;
+    const context = canvas?.getContext("2d");
+    if (!canvas || !context || revealed) return;
+
+    const bounds = canvas.getBoundingClientRect();
+    const point = {
+      x: event.clientX - bounds.left,
+      y: event.clientY - bounds.top,
+    };
+    context.globalCompositeOperation = "destination-out";
+    context.lineWidth = 38;
+    context.lineCap = "round";
+    context.lineJoin = "round";
+    context.beginPath();
+    if (lastPoint.current) {
+      context.moveTo(lastPoint.current.x, lastPoint.current.y);
+      context.lineTo(point.x, point.y);
+    } else {
+      context.arc(point.x, point.y, 19, 0, Math.PI * 2);
+    }
+    context.stroke();
+    lastPoint.current = point;
+
+    const sample = sampleCanvasRef.current || document.createElement("canvas");
+    sampleCanvasRef.current = sample;
+    sample.width = 40;
+    sample.height = 20;
+    const sampleContext = sample.getContext("2d", { willReadFrequently: true });
+    if (!sampleContext) throw new Error("Unable to measure scratch progress");
+    sampleContext.drawImage(canvas, 0, 0, sample.width, sample.height);
+    const pixels = sampleContext.getImageData(0, 0, sample.width, sample.height).data;
+    let scratched = 0;
+    for (let index = 3; index < pixels.length; index += 4) {
+      if (pixels[index] < 128) scratched += 1;
+    }
+
+    if (scratched / (sample.width * sample.height) >= .7) {
+      context.clearRect(0, 0, bounds.width, bounds.height);
+      isScratching.current = false;
+      lastPoint.current = null;
+      onComplete();
+    }
+  };
+
+  const handlePointerDown = (event) => {
+    if (revealed) return;
+    event.preventDefault();
+    isScratching.current = true;
+    lastPoint.current = null;
+    event.currentTarget.setPointerCapture(event.pointerId);
+    eraseAt(event);
+  };
+
+  const handlePointerMove = (event) => {
+    if (!isScratching.current) return;
+    event.preventDefault();
+    eraseAt(event);
+  };
+
+  const handlePointerEnd = (event) => {
+    isScratching.current = false;
+    lastPoint.current = null;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+  };
+
+  return <canvas ref={canvasRef} className="scratch-surface" aria-hidden="true" onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerEnd} onPointerCancel={handlePointerEnd} />;
+}
+
+function downloadCalendarInvite() {
+  const escapeIcsText = (value) => value
+    .replace(/\\/g, "\\\\")
+    .replace(/;/g, "\\;")
+    .replace(/,/g, "\\,")
+    .replace(/\n/g, "\\n");
+  const timestamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
+  const description = "The Wedding Celebration on 5 December and Grand Reception on 6 December. Times and venue to be announced.";
+  const calendarEvent = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Bharath and Madhushri//Wedding Invitation//EN",
+    "CALSCALE:GREGORIAN",
+    "BEGIN:VEVENT",
+    `UID:${Date.now()}-bharath-madhushri@wedding-invitation`,
+    `DTSTAMP:${timestamp}`,
+    "DTSTART;VALUE=DATE:20261205",
+    "DTEND;VALUE=DATE:20261207",
+    `SUMMARY:${escapeIcsText("Bharath & Madhushri — Wedding Celebrations")}`,
+    `DESCRIPTION:${escapeIcsText(description)}`,
+    "END:VEVENT",
+    "END:VCALENDAR",
+  ].join("\r\n") + "\r\n";
+  const invite = new Blob([calendarEvent], { type: "text/calendar;charset=utf-8" });
+  const url = URL.createObjectURL(invite);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "bharath-madhushri-wedding.ics";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
 function App() {
   const [opened, setOpened] = useState(false);
   const [revealed, setRevealed] = useState(false);
   const [lightbox, setLightbox] = useState(null);
   const [reducedMotion, setReducedMotion] = useState(false);
-  const [rsvp, setRsvp] = useState({});
   const eventData = useMemo(() => config.events, []);
+  const revealScratchCard = useCallback(() => setRevealed(true), []);
 
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -47,49 +199,34 @@ function App() {
     return () => query.removeEventListener?.("change", update);
   }, []);
 
-  const submit = async (event) => {
-    event.preventDefault();
-    if (!process.env.REACT_APP_BACKEND_URL) {
-      toast.info("RSVP details are not connected yet", { description: "Please share your response with the family directly for now." });
-      return;
-    }
-    try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/rsvp`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(rsvp) });
-      if (!response.ok) throw new Error("RSVP request failed");
-      toast.success("Your response has been received", { description: "We cannot wait to celebrate with you." });
-      event.currentTarget.reset(); setRsvp({});
-    } catch { toast.error("We could not send your response", { description: "Please try again shortly or contact the family directly." }); }
-  };
-
-  return <div className="site-shell"><Toaster theme="dark" position="bottom-center" />
+  return <div className="site-shell">
     {!opened && <section className="envelope-stage" aria-label="Wedding invitation">
       <div className="ambient-orb orb-one" /><div className="ambient-orb orb-two" />
-      <div className="ganesh-mark" aria-hidden="true">ॐ</div><p className="sacred-line">श्री गणेशाय नमः</p>
+      <div className="ganesh-mark" aria-hidden="true">ॐ</div><p className="sacred-line">Shri Ganeshaya Namah</p>
       <button className="envelope-button" onClick={() => setOpened(true)} aria-label="Open wedding invitation">
-        <span className="envelope-paper"><span className="paper-kicker">A royal invitation</span><span className="paper-names">Madhushri<br /><i>&amp;</i><br />Bharath</span><span className="paper-date">{config.date} · {config.year}</span></span>
+        <span className="envelope-paper"><span className="paper-kicker">A royal invitation</span><span className="paper-names">Bharath<br /><i>&amp;</i><br />Madhushri</span><span className="paper-date">{config.date} · {config.year}</span></span>
         <span className="envelope-flap" /><span className="wax-seal">✿</span>
       </button>
       <p className="open-hint"><Sparkles size={14} /> Touch the seal to open</p>
       <div className="stage-bottom">A celebration of love <span>·</span> Chandigarh, India</div>
     </section>}
     <AnimatePresence>{opened && <motion.div className="site-content" initial={reducedMotion ? false : { opacity: 0, rotateX: 5, y: 30 }} animate={{ opacity: 1, rotateX: 0, y: 0 }} transition={{ duration: reducedMotion ? 0 : 1.1, ease: [0.22, 1, 0.36, 1] }}>
-      <nav className="nav"><a className="monogram" href="#home" aria-label="Madhushri and Bharath home">M<span>✦</span>B</a><div className="nav-links">{[["home", "Our story"], ["celebrations", "Celebrations"], ["gallery", "Gallery"], ["rsvp", "RSVP"]].map(([id, label]) => <a href={`#${id}`} key={id}>{label}</a>)}</div><a className="nav-cta" href="#rsvp">Save your seat <ArrowUpRight size={14} /></a></nav>
+      <nav className="nav"><a className="monogram" href="#home" aria-label="Bharath and Madhushri home">B<span>✦</span>M</a><div className="nav-links">{[["home", "Our story"], ["celebrations", "Celebrations"], ["gallery", "Gallery"]].map(([id, label]) => <a href={`#${id}`} key={id}>{label}</a>)}</div></nav>
       <main>
         <section className="hero-section" id="home">
           <div className="hero-backdrop" />
-          <div className="hero-ornament ornament-left" aria-hidden="true">✺</div><div className="hero-ornament ornament-right" aria-hidden="true">✺</div>
-          <Reveal reducedMotion={reducedMotion} className="hero-copy"><p className="eyebrow">With the blessings of our families</p><h1>Madhushri <i>&amp;</i><br />Bharath</h1><p className="hero-caption">Two hearts, one beautiful beginning.</p><div className="hero-date"><CalendarDays size={15} /> 05 — 06 December · 2026</div><a className="outline-link" href="#story">Discover our invitation <ArrowDown size={14} /></a></Reveal>
+          <div className="hero-ornament ornament-left" aria-hidden="true">✺</div>          <span className="mandala-symbol" aria-hidden="true"></span><div className="hero-blessing"><img className="ganesha-image" src="/ganesha.png" alt="" /><p className="eyebrow">With the blessings of our families</p></div><div className="hero-ornament ornament-right" aria-hidden="true"></div>
+          <Reveal reducedMotion={reducedMotion} className="hero-intro"><h1>Bharath <i>&amp;</i><br />Madhushri</h1><p className="hero-caption">Two hearts, one beautiful beginning.</p><div className="hero-date"><CalendarDays size={15} /> 05 — 06 December · 2026</div><a className="outline-link" href="#story">Discover our invitation <ArrowDown size={14} /></a></Reveal>
           <div className="hero-photo-wrap" aria-label="Wedding portrait artwork"><div className="hero-photo"><img src={config.gallery[0].src} alt={config.gallery[0].alt} /></div><div className="photo-caption">The beginning of forever <span>· 01</span></div></div>
           <span className="hero-side-note">A NEW CHAPTER · 2026</span>
         </section>
-        <section className="intro-section section-pad" id="story"><div className="section-index">01 / OUR STORY</div><Reveal reducedMotion={reducedMotion}><p className="eyebrow">A note from our families</p><h2 className="display-title">A love story,<br /><i>written in the stars.</i></h2><p className="intro-copy">With the blessings of Waheguru and the love of our families, we invite you to join us as we celebrate the beautiful union of Madhushri and Bharath.</p><div className="intro-signature">With love <span>✦</span> Madhushri &amp; Bharath</div></Reveal><div className="intro-seal" aria-hidden="true">M<span>&amp;</span>B</div></section>
-        <section className="scratch-section section-pad"><div className="section-index">02 / A LITTLE SURPRISE</div><Reveal reducedMotion={reducedMotion}><p className="eyebrow">A keepsake just for you</p><h2 className="script-title">A little surprise</h2><p className="section-subtitle">Tap the card to reveal our special day</p><button className={`scratch-card ${revealed ? "is-revealed" : ""}`} onClick={() => setRevealed(true)} aria-label={revealed ? "Wedding date revealed" : "Reveal the wedding date"}><span className="scratch-face">✧ Scratch to reveal ✧</span><span className="scratch-reveal"><small>THE DATE IS SET</small><strong>05 · 06<br />DECEMBER 2026</strong></span></button><button className="reveal-link" onClick={() => setRevealed(true)}>{revealed ? "A date to remember" : "Prefer not to scratch? Reveal here"}</button></Reveal></section>
+        <section className="intro-section section-pad" id="story"><div className="section-index">01 / OUR STORY</div><Reveal reducedMotion={reducedMotion}><p className="eyebrow">A note from our families</p><h2 className="display-title">A love story,<br /><i>written in the stars.</i></h2><p className="intro-copy">With the blessings of Waheguru and the love of our families, we invite you to join us as we celebrate the beautiful union of Bharath and Madhushri.</p><div className="intro-signature">With love <span>✦</span> Bharath &amp; Madhushri</div></Reveal><div className="intro-seal" aria-hidden="true">B<span>&amp;</span>M</div></section>
+        <section className="scratch-section section-pad"><div className="section-index">02 / A LITTLE SURPRISE</div><Reveal reducedMotion={reducedMotion}><p className="eyebrow">A keepsake just for you</p><h2 className="script-title">A little surprise</h2><p className="section-subtitle">Scratch with your finger or pointer to reveal our special day</p><button className={`scratch-card ${revealed ? "is-revealed" : ""}`} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); revealScratchCard(); } }} aria-label={revealed ? "Wedding date revealed" : "Scratch to reveal the wedding date"}><span className="scratch-reveal"><small>THE DATE IS SET</small><strong>05 · 06<br />DECEMBER 2026</strong></span><ScratchSurface revealed={revealed} onComplete={revealScratchCard} /></button><button className="reveal-link" onClick={revealScratchCard}>{revealed ? "A date to remember" : "Prefer not to scratch? Reveal here"}</button></Reveal></section>
         <section className="celebrations-section section-pad" id="celebrations"><div className="section-index">03 / THE CELEBRATIONS</div><div className="section-heading"><div><p className="eyebrow">Gather with us</p><h2 className="serif-title">Two days.<br /><i>One beginning.</i></h2></div><p className="heading-note">Every moment made more meaningful<br />with the people we love.</p></div><div className="event-timeline">{eventData.map((item, index) => <Reveal reducedMotion={reducedMotion} className={`event-card event-${index}`} key={item.date} delay={index * 0.12}><div className="timeline-node">✦</div><div className="event-date"><strong>{item.date}</strong><span>{item.month}</span><small>{item.weekday}</small></div><div className="event-details"><span className="event-number">0{index + 1} · CHAPTER</span><h3>{item.title}</h3><p>{item.time}</p><p><MapPin size={14} /> {item.venue}</p></div><div className="event-art" aria-hidden="true">{index === 0 ? "I" : "II"}</div></Reveal>)}</div></section>
         <section className="family-section section-pad"><div className="section-index">04 / OUR FAMILIES</div><Reveal reducedMotion={reducedMotion}><p className="eyebrow">Two families, one home</p><h2 className="serif-title">The soul synced <i>two.</i></h2></Reveal><div className="family-grid">{[{ label: "The bride's family", image: config.gallery[1] }, { label: "The groom's family", image: config.gallery[2] }].map((family, index) => <Reveal reducedMotion={reducedMotion} className="family-card" key={family.label} delay={index * .1}><div className="family-image"><img src={family.image.src} alt={family.image.alt} loading="lazy" /></div><p>{family.label}</p><span>With love and blessings</span></Reveal>)}</div><div className="family-ampersand" aria-hidden="true">&amp;</div></section>
         <section className="gallery-section section-pad" id="gallery"><div className="section-index">05 / MOMENTS TO KEEP</div><div className="section-heading"><div><p className="eyebrow">A glimpse of the feeling</p><h2 className="serif-title">Frames from<br /><i>our story.</i></h2></div><p className="heading-note">Little moments, lasting memories.</p></div><div className="gallery-grid">{config.gallery.map((image, index) => <motion.button className={`gallery-item gallery-${index}`} whileHover={reducedMotion ? undefined : { rotateY: index === 1 ? -4 : 4, rotateX: -3, scale: 1.025, z: 28 }} onClick={() => setLightbox(image)} key={image.src} aria-label={`View photo: ${image.alt}`}><img src={image.src} alt={image.alt} loading="lazy" /><span>0{index + 1} <ArrowUpRight size={13} /></span></motion.button>)}</div></section>
-        <section className="countdown-section section-pad"><Reveal reducedMotion={reducedMotion}><div className="countdown-flower" aria-hidden="true">✺</div><p className="eyebrow">Until we meet beneath the lights</p><h2 className="script-title">Counting down to forever</h2><Countdown /><p className="countdown-date">05 December 2026 · India Standard Time</p></Reveal></section>
-        <section className="rsvp-section section-pad" id="rsvp"><div className="rsvp-card"><Reveal reducedMotion={reducedMotion}><p className="eyebrow">Your presence is our present</p><h2 className="display-title">Will you<br /><i>join us?</i></h2><p className="rsvp-copy">We would be delighted to celebrate this new beginning with you.</p><form onSubmit={submit} data-testid="rsvp-form"><label>Your name<input required name="name" placeholder="How should we address you?" onChange={event => setRsvp({ ...rsvp, name: event.target.value })} data-testid="rsvp-name-input" /></label><label>Mobile number<input required name="mobile" type="tel" placeholder="Your contact number" onChange={event => setRsvp({ ...rsvp, mobile: event.target.value })} data-testid="rsvp-mobile-input" /></label><div className="form-row"><label>Will you join us?<select required name="attending" onChange={event => setRsvp({ ...rsvp, attending: event.target.value })} data-testid="rsvp-attendance-select"><option value="">Choose one</option><option>Joyfully accepts</option><option>Regretfully declines</option></select></label><label>Guests<select name="guests" onChange={event => setRsvp({ ...rsvp, guests: event.target.value })} data-testid="rsvp-guests-select"><option value="">Select</option><option>1 guest</option><option>2 guests</option><option>3+ guests</option></select></label></div><label>A note for the couple <textarea name="message" placeholder="Leave a little love (optional)" onChange={event => setRsvp({ ...rsvp, message: event.target.value })} data-testid="rsvp-message-input" /></label><button className="submit-button" type="submit" data-testid="rsvp-submit-button">Send my response <ArrowUpRight size={16} /></button></form></Reveal></div></section>
-        <footer className="footer"><div className="footer-mark">M<span>✦</span>B</div><p className="eyebrow">With love and blessings</p><h2 className="script-title">Madhushri <i>&amp;</i> Bharath</h2><p>Two hearts. One forever.</p><span className="footer-date">05 — 06 December · 2026</span><Music2 size={15} className="footer-note" /></footer>
+        <section className="countdown-section section-pad"><Reveal reducedMotion={reducedMotion}><div className="countdown-flower" aria-hidden="true">✺</div><p className="eyebrow">Until we meet beneath the lights</p><h2 className="script-title">Counting down to forever</h2><Countdown /><p className="countdown-date">05 December 2026 · India Standard Time</p><button className="calendar-button" type="button" onClick={downloadCalendarInvite}><CalendarDays size={16} /> Add to calendar</button></Reveal></section>
+        <footer className="footer"><div className="footer-mark">B<span>✦</span>M</div><p className="eyebrow">With love and blessings</p><h2 className="script-title">Bharath <i>&amp;</i> Madhushri</h2><p>Two hearts. One forever.</p><span className="footer-date">05 — 06 December · 2026</span><Music2 size={15} className="footer-note" /></footer>
       </main>
     </motion.div>}</AnimatePresence>
     {lightbox && <div className="lightbox" role="dialog" aria-modal="true" aria-label={lightbox.alt} onClick={() => setLightbox(null)}><button onClick={() => setLightbox(null)} aria-label="Close image"><X /></button><img src={lightbox.src} alt={lightbox.alt} /></div>}
