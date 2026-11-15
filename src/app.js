@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "@/app.css";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowDown, ArrowUpRight, CalendarDays, MapPin, Music2, Sparkles, X } from "lucide-react";
@@ -29,125 +29,6 @@ function Countdown() {
 
 function Reveal({ children, className = "", reducedMotion = false, delay = 0 }) {
   return <motion.div className={className} initial={reducedMotion ? false : { opacity: 0, y: 34, rotateX: 5 }} whileInView={reducedMotion ? undefined : { opacity: 1, y: 0, rotateX: 0 }} viewport={{ once: true, margin: "-70px" }} transition={reducedMotion ? undefined : { duration: 0.9, delay, ease: [0.22, 1, 0.36, 1] }}>{children}</motion.div>;
-}
-
-function ScratchSurface({ revealed, onComplete }) {
-  const canvasRef = useRef(null);
-  const sampleCanvasRef = useRef(null);
-  const lastPoint = useRef(null);
-  const isScratching = useRef(false);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const bounds = canvas.getBoundingClientRect();
-    const width = bounds.width;
-    const height = bounds.height;
-    const scale = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = Math.round(width * scale);
-    canvas.height = Math.round(height * scale);
-    const context = canvas.getContext("2d");
-    if (!context) throw new Error("Unable to initialize the scratch card");
-    context.scale(scale, scale);
-
-    if (revealed) {
-      context.clearRect(0, 0, width, height);
-      return;
-    }
-
-    const foil = context.createLinearGradient(0, 0, width, height);
-    foil.addColorStop(0, "#eee0c7");
-    foil.addColorStop(.42, "#c8ae87");
-    foil.addColorStop(.7, "#f5e8d1");
-    foil.addColorStop(1, "#b99b70");
-    context.fillStyle = foil;
-    context.fillRect(0, 0, width, height);
-    context.globalAlpha = .18;
-    context.strokeStyle = "#fffaf1";
-    for (let x = -height; x < width; x += 16) {
-      context.beginPath();
-      context.moveTo(x, 0);
-      context.lineTo(x + height, height);
-      context.stroke();
-    }
-    context.globalAlpha = 1;
-    context.fillStyle = "#78593a";
-    context.font = "600 24px Georgia, serif";
-    context.textAlign = "center";
-    context.textBaseline = "middle";
-    context.fillText("✧ Scratch to reveal ✧", width / 2, height / 2);
-  }, [revealed]);
-
-  const eraseAt = (event) => {
-    const canvas = canvasRef.current;
-    const context = canvas?.getContext("2d");
-    if (!canvas || !context || revealed) return;
-
-    const bounds = canvas.getBoundingClientRect();
-    const point = {
-      x: event.clientX - bounds.left,
-      y: event.clientY - bounds.top,
-    };
-    context.globalCompositeOperation = "destination-out";
-    context.lineWidth = 38;
-    context.lineCap = "round";
-    context.lineJoin = "round";
-    context.beginPath();
-    if (lastPoint.current) {
-      context.moveTo(lastPoint.current.x, lastPoint.current.y);
-      context.lineTo(point.x, point.y);
-    } else {
-      context.arc(point.x, point.y, 19, 0, Math.PI * 2);
-    }
-    context.stroke();
-    lastPoint.current = point;
-
-    const sample = sampleCanvasRef.current || document.createElement("canvas");
-    sampleCanvasRef.current = sample;
-    sample.width = 40;
-    sample.height = 20;
-    const sampleContext = sample.getContext("2d", { willReadFrequently: true });
-    if (!sampleContext) throw new Error("Unable to measure scratch progress");
-    sampleContext.drawImage(canvas, 0, 0, sample.width, sample.height);
-    const pixels = sampleContext.getImageData(0, 0, sample.width, sample.height).data;
-    let scratched = 0;
-    for (let index = 3; index < pixels.length; index += 4) {
-      if (pixels[index] < 128) scratched += 1;
-    }
-
-    if (scratched / (sample.width * sample.height) >= .7) {
-      context.clearRect(0, 0, bounds.width, bounds.height);
-      isScratching.current = false;
-      lastPoint.current = null;
-      onComplete();
-    }
-  };
-
-  const handlePointerDown = (event) => {
-    if (revealed) return;
-    event.preventDefault();
-    isScratching.current = true;
-    lastPoint.current = null;
-    event.currentTarget.setPointerCapture(event.pointerId);
-    eraseAt(event);
-  };
-
-  const handlePointerMove = (event) => {
-    if (!isScratching.current) return;
-    event.preventDefault();
-    eraseAt(event);
-  };
-
-  const handlePointerEnd = (event) => {
-    isScratching.current = false;
-    lastPoint.current = null;
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId);
-    }
-  };
-
-  return <canvas ref={canvasRef} className="scratch-surface" aria-hidden="true" onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerEnd} onPointerCancel={handlePointerEnd} />;
 }
 
 function downloadCalendarInvite() {
@@ -186,11 +67,9 @@ function downloadCalendarInvite() {
 
 function App() {
   const [opened, setOpened] = useState(false);
-  const [revealed, setRevealed] = useState(false);
   const [lightbox, setLightbox] = useState(null);
   const [reducedMotion, setReducedMotion] = useState(false);
   const eventData = useMemo(() => config.events, []);
-  const revealScratchCard = useCallback(() => setRevealed(true), []);
 
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -221,10 +100,9 @@ function App() {
           <span className="hero-side-note">A NEW CHAPTER · 2026</span>
         </section>
         <section className="intro-section section-pad" id="story"><div className="section-index">01 / OUR STORY</div><Reveal reducedMotion={reducedMotion}><p className="eyebrow">A note from our families</p><h2 className="display-title">A love story,<br /><i>written in the stars.</i></h2><p className="intro-copy">With the blessings of Waheguru and the love of our families, we invite you to join us as we celebrate the beautiful union of Bharath and Madhushri.</p><div className="intro-signature">With love <span>✦</span> Bharath &amp; Madhushri</div></Reveal><div className="intro-seal" aria-hidden="true">B<span>&amp;</span>M</div></section>
-        <section className="scratch-section section-pad"><div className="section-index">02 / A LITTLE SURPRISE</div><Reveal reducedMotion={reducedMotion}><p className="eyebrow">A keepsake just for you</p><h2 className="script-title">A little surprise</h2><p className="section-subtitle">Scratch with your finger or pointer to reveal our special day</p><button className={`scratch-card ${revealed ? "is-revealed" : ""}`} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); revealScratchCard(); } }} aria-label={revealed ? "Wedding date revealed" : "Scratch to reveal the wedding date"}><span className="scratch-reveal"><small>THE DATE IS SET</small><strong>05 · 06<br />DECEMBER 2026</strong></span><ScratchSurface revealed={revealed} onComplete={revealScratchCard} /></button><button className="reveal-link" onClick={revealScratchCard}>{revealed ? "A date to remember" : "Prefer not to scratch? Reveal here"}</button></Reveal></section>
-        <section className="celebrations-section section-pad" id="celebrations"><div className="section-index">03 / THE CELEBRATIONS</div><div className="section-heading"><div><p className="eyebrow">Gather with us</p><h2 className="serif-title">Two days.<br /><i>One beginning.</i></h2></div><p className="heading-note">Every moment made more meaningful<br />with the people we love.</p></div><div className="event-timeline">{eventData.map((item, index) => <Reveal reducedMotion={reducedMotion} className={`event-card event-${index}`} key={item.date} delay={index * 0.12}><div className="timeline-node">✦</div><div className="event-date"><strong>{item.date}</strong><span>{item.month}</span><small>{item.weekday}</small></div><div className="event-details"><span className="event-number">0{index + 1} · CHAPTER</span><h3>{item.title}</h3><p>{item.time}</p><p><MapPin size={14} /> {item.venue}</p></div><div className="event-art" aria-hidden="true">{index === 0 ? "I" : "II"}</div></Reveal>)}</div></section>
-        <section className="family-section section-pad"><div className="section-index">04 / OUR FAMILIES</div><Reveal reducedMotion={reducedMotion}><p className="eyebrow">Two families, one home</p><h2 className="serif-title">The soul synced <i>two.</i></h2></Reveal><div className="family-grid">{[{ label: "The bride's family", image: config.gallery[1] }, { label: "The groom's family", image: config.gallery[2] }].map((family, index) => <Reveal reducedMotion={reducedMotion} className="family-card" key={family.label} delay={index * .1}><div className="family-image"><img src={family.image.src} alt={family.image.alt} loading="lazy" /></div><p>{family.label}</p><span>With love and blessings</span></Reveal>)}</div><div className="family-ampersand" aria-hidden="true">&amp;</div></section>
-        <section className="gallery-section section-pad" id="gallery"><div className="section-index">05 / MOMENTS TO KEEP</div><div className="section-heading"><div><p className="eyebrow">A glimpse of the feeling</p><h2 className="serif-title">Frames from<br /><i>our story.</i></h2></div><p className="heading-note">Little moments, lasting memories.</p></div><div className="gallery-grid">{config.gallery.map((image, index) => <motion.button className={`gallery-item gallery-${index}`} whileHover={reducedMotion ? undefined : { rotateY: index === 1 ? -4 : 4, rotateX: -3, scale: 1.025, z: 28 }} onClick={() => setLightbox(image)} key={image.src} aria-label={`View photo: ${image.alt}`}><img src={image.src} alt={image.alt} loading="lazy" /><span>0{index + 1} <ArrowUpRight size={13} /></span></motion.button>)}</div></section>
+        <section className="celebrations-section section-pad" id="celebrations"><div className="section-index">02 / THE CELEBRATIONS</div><div className="section-heading"><div><p className="eyebrow">Gather with us</p><h2 className="serif-title">Two days.<br /><i>One beginning.</i></h2></div><p className="heading-note">Every moment made more meaningful<br />with the people we love.</p></div><div className="event-timeline">{eventData.map((item, index) => <Reveal reducedMotion={reducedMotion} className={`event-card event-${index}`} key={item.date} delay={index * 0.12}><div className="timeline-node">✦</div><div className="event-date"><strong>{item.date}</strong><span>{item.month}</span><small>{item.weekday}</small></div><div className="event-details"><span className="event-number">0{index + 1} · CHAPTER</span><h3>{item.title}</h3><p>{item.time}</p><p><MapPin size={14} /> {item.venue}</p></div><div className="event-art" aria-hidden="true">{index === 0 ? "I" : "II"}</div></Reveal>)}</div></section>
+        <section className="family-section section-pad"><div className="section-index">03 / OUR FAMILIES</div><Reveal reducedMotion={reducedMotion}><p className="eyebrow">Two families, one home</p><h2 className="serif-title">The soul synced <i>two.</i></h2></Reveal><div className="family-grid">{[{ label: "The bride's family", image: config.gallery[1] }, { label: "The groom's family", image: config.gallery[2] }].map((family, index) => <Reveal reducedMotion={reducedMotion} className="family-card" key={family.label} delay={index * .1}><div className="family-image"><img src={family.image.src} alt={family.image.alt} loading="lazy" /></div><p>{family.label}</p><span>With love and blessings</span></Reveal>)}</div><div className="family-ampersand" aria-hidden="true">&amp;</div></section>
+        <section className="gallery-section section-pad" id="gallery"><div className="section-index">04 / MOMENTS TO KEEP</div><div className="section-heading"><div><p className="eyebrow">A glimpse of the feeling</p><h2 className="serif-title">Frames from<br /><i>our story.</i></h2></div><p className="heading-note">Little moments, lasting memories.</p></div><div className="gallery-grid">{config.gallery.map((image, index) => <motion.button className={`gallery-item gallery-${index}`} whileHover={reducedMotion ? undefined : { rotateY: index === 1 ? -4 : 4, rotateX: -3, scale: 1.025, z: 28 }} onClick={() => setLightbox(image)} key={image.src} aria-label={`View photo: ${image.alt}`}><img src={image.src} alt={image.alt} loading="lazy" /><span>0{index + 1} <ArrowUpRight size={13} /></span></motion.button>)}</div></section>
         <section className="countdown-section section-pad"><Reveal reducedMotion={reducedMotion}><div className="countdown-flower" aria-hidden="true">✺</div><p className="eyebrow">Until we meet beneath the lights</p><h2 className="script-title">Counting down to forever</h2><Countdown /><p className="countdown-date">05 December 2026 · India Standard Time</p><button className="calendar-button" type="button" onClick={downloadCalendarInvite}><CalendarDays size={16} /> Add to calendar</button></Reveal></section>
         <footer className="footer"><div className="footer-mark">B<span>✦</span>M</div><p className="eyebrow">With love and blessings</p><h2 className="script-title">Bharath <i>&amp;</i> Madhushri</h2><p>Two hearts. One forever.</p><span className="footer-date">05 — 06 December · 2026</span><Music2 size={15} className="footer-note" /></footer>
       </main>
