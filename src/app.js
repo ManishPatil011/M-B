@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import "@/app.css";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowDown, ArrowUpRight, CalendarDays, MapPin, Music2, Sparkles, X } from "lucide-react";
+import { ArrowDown, ArrowUpRight, CalendarDays, MapPin, Music2, Pause, Play, Sparkles, X } from "lucide-react";
 import "@/entrance.css";
 
 const config = {
@@ -73,13 +73,44 @@ function downloadCalendarInvite() {
 
 function App() {
   const [opened, setOpened] = useState(false);
+  const [musicPlaying, setMusicPlaying] = useState(false);
+  const [musicError, setMusicError] = useState("");
   const [lightbox, setLightbox] = useState(null);
   const [calendarHelpOpen, setCalendarHelpOpen] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const audioRef = useRef(null);
   const eventData = useMemo(() => config.events, []);
   const handleCalendarInvite = () => {
     downloadCalendarInvite();
     setCalendarHelpOpen(true);
+  };
+  const startMusic = async () => {
+    const audio = audioRef.current;
+    if (!audio) {
+      setMusicError("The music player is unavailable.");
+      return;
+    }
+
+    try {
+      if (audio.ended) audio.currentTime = 0;
+      setMusicError("");
+      await audio.play();
+    } catch (error) {
+      console.error("Unable to play the wedding music.", error);
+      setMusicError("Music could not start. Tap the music button to try again.");
+    }
+  };
+  const toggleMusic = () => {
+    const audio = audioRef.current;
+    if (audio && !audio.paused) {
+      audio.pause();
+      return;
+    }
+    void startMusic();
+  };
+  const handleOpenInvitation = () => {
+    setOpened(true);
+    void startMusic();
   };
 
   useEffect(() => {
@@ -93,7 +124,7 @@ function App() {
     {!opened && <section className="envelope-stage" aria-label="Wedding invitation">
       <div className="ambient-orb orb-one" /><div className="ambient-orb orb-two" />
       <div className="ganesh-mark" aria-hidden="true">ॐ</div><p className="sacred-line">Shri Ganeshaya Namah</p>
-      <button className="envelope-button" onClick={() => setOpened(true)} aria-label="Open wedding invitation">
+      <button className="envelope-button" onClick={handleOpenInvitation} aria-label="Open wedding invitation and start music">
         <span className="envelope-paper"><span className="paper-kicker">A royal invitation</span><span className="paper-names">Bharath<br /><span className="paper-heart" aria-label="and">♥</span><br />Madhushri</span><span className="paper-date">{config.date} · {config.year}</span></span>
         <span className="envelope-flap" /><span className="wax-seal">❤️</span>
       </button>
@@ -160,6 +191,27 @@ function App() {
         <p id="calendar-help-copy">The .ics file is downloading. Once it’s ready, open it from Downloads and choose “Add to Calendar” or “Import” in your calendar app. Confirm when prompted.</p>
         <button type="button" autoFocus onClick={() => setCalendarHelpOpen(false)}>OK</button>
       </section>
+    </div>}
+    <audio
+      ref={audioRef}
+      src="/music.mp3"
+      preload="auto"
+      onPlay={() => setMusicPlaying(true)}
+      onPause={() => setMusicPlaying(false)}
+      onEnded={() => setMusicPlaying(false)}
+      onError={() => {
+        console.error("Unable to load public/music.mp3.", audioRef.current?.error);
+        setMusicPlaying(false);
+        setMusicError("Music could not load. Check your connection and try again.");
+      }}
+    />
+    {opened && <div className="music-control">
+      <button className={`music-disc${musicPlaying ? " is-playing" : ""}`} type="button" onClick={toggleMusic} aria-pressed={musicPlaying} aria-label={musicPlaying ? "Pause wedding music" : "Play wedding music"}>
+        <span className="music-disc-mark">B<span aria-hidden="true">🎵</span>M</span>
+        <span className="music-bars" aria-hidden="true"><i /><i /><i /><i /><i /></span>
+        <span className="music-action-icon" aria-hidden="true">{musicPlaying ? <Pause size={12} /> : <Play size={12} />}</span>
+      </button>
+      {musicError && <p role="alert">{musicError}</p>}
     </div>}
     {lightbox && <div className="lightbox" role="dialog" aria-modal="true" aria-label={lightbox.alt} onClick={() => setLightbox(null)}><button onClick={() => setLightbox(null)} aria-label="Close image"><X /></button><img src={lightbox.src} alt={lightbox.alt} /></div>}
   </div>;
