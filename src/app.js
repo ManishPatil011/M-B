@@ -15,9 +15,9 @@ const config = {
     mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m16!1m11!1m3!1d3!2d76.3742495199002!3d14.218736934903795!2m2!1f0!2f90!3m2!1i1024!2i768!4f75!3m3!1m2!1s0x3bba752716b20417%3A0x1b3e5da89175012e!2sSri%20Tirumala%20Kalyana%20Mantapa!4v1794767340680",
   },
   gallery: [
-    { src: "https://images.unsplash.com/photo-1600118569960-ea0f09f92d5b?auto=format&fit=crop&w=1400&q=85", alt: "A sunlit palace archway" },
-    { src: "https://images.unsplash.com/photo-1561042771-abb14f50b8f4?auto=format&fit=crop&w=1400&q=85", alt: "Ornate palace architecture" },
-    { src: "https://images.unsplash.com/photo-1699764681875-dd04ce36b1c3?auto=format&fit=crop&w=1400&q=85", alt: "Warm marigold wedding details" },
+    { src: "/IMG-20261113-WA0012.jpg", alt: "B&M" },
+    { src: "/bothfam.jpeg", alt: "Ornate palace architecture" },
+    { src: "/IMG-20261110-WA0013.jpg", alt: "Warm marigold wedding details" },
   ],
   events: [
     { date: "5th", month: "December", weekday: "Saturday", title: "Reception", time: "Evening - 7:00 PM onwards" },
@@ -107,24 +107,20 @@ function App() {
         </section>
         <section className="intro-section section-pad" id="story"><div className="section-index">01 / OUR STORY</div><Reveal reducedMotion={reducedMotion}><p className="eyebrow">A note from our families</p><h2 className="display-title">A love story,<br /><i>written in the stars.</i></h2><p className="intro-copy">With the divine blessings of Lord Shiva and the love and blessings of our families, we joyfully invite you to celebrate the beautiful union of Bharath and Madhushri.</p><div className="intro-signature">With love <span>✦</span> Bharath &amp; Madhushri</div></Reveal><div className="intro-seal" aria-hidden="true"><strong>B<span>&amp;</span>M</strong></div></section>
         <section className="celebrations-section section-pad" id="celebrations">
-          <div className="section-index">02 / THE CELEBRATIONS</div>
-          <div className="section-heading">
-            <div>
-              <p className="eyebrow">Gather with us</p>
-              <h2 className="serif-title">Two days.<br /><i>One beginning.</i></h2>
-            </div>
-            <p className="heading-note">Every moment made more meaningful<br />with the people we love.</p>
-          </div>
+          <h2 className="script-title celebrations-title">The Celebrations</h2>
           <div className="event-timeline">
             {eventData.map((item, index) => <Reveal reducedMotion={reducedMotion} className={`event-card event-${index}`} key={item.date} delay={index * 0.12}>
-              <div className="timeline-node">✦</div>
-              <div className="event-date"><strong>{item.date}</strong><span>{item.month}</span><small>{item.weekday}</small></div>
-              <div className="event-details">
-                <span className="event-number">0{index + 1} · CHAPTER</span>
-                <h3>{item.title}</h3>
-                <p>{item.time}</p>
+              <div className="timeline-node" aria-hidden="true">♥</div>
+              <div className="event-info">
+                <div className="event-info-heading">
+                  <h3>{item.title}</h3>
+                  <span className="event-time">{item.time}</span>
+                </div>
+                <div className="event-meta">
+                  <span>{item.date} {item.month}, {config.year}</span>
+                  <span className="event-weekday">{item.weekday}</span>
+                </div>
               </div>
-              <div className="event-art" aria-hidden="true">{index === 0 ? "I" : "II"}</div>
             </Reveal>)}
           </div>
           <div className="venue-card">
