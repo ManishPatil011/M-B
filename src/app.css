@@ -206,7 +206,7 @@
 .hero-heart{display:inline-block;margin:0 .08em;color:var(--gold);font-size:.6em;line-height:1;vertical-align:.08em;-webkit-text-fill-color:var(--gold);-webkit-text-stroke:0;text-shadow:0 3px 8px rgba(100,67,40,.25)}
 .paper-heart{color:var(--gold);font-size:.66em;line-height:1}
 .hero-photo img{object-fit:contain;background:var(--paper-dark)}
-.venue-card{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);max-width:1000px;margin:64px auto 0;background:var(--paper);border:1px solid rgba(128,100,72,.18);box-shadow:0 20px 45px rgba(69,49,29,.1)}
+.venue-card{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);max-width:1000px;margin:64px auto 0;background:var(--paper);border:1px solid rgba(128,100,72,.18);box-shadow:0 20px 45px rgba(69,49,29,.1)}
 .venue-copy{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding:clamp(28px,5vw,56px)}
 .venue-copy .eyebrow{margin-bottom:14px}
 .venue-copy h3{font-size:clamp(28px,3vw,40px);font-weight:400;line-height:1.05;margin:0 0 16px}
@@ -214,9 +214,9 @@
 .venue-directions{display:inline-flex;align-items:center;gap:9px;padding:13px 18px;border-radius:99px;background:var(--sand-deep);color:var(--white);text-decoration:none;font:10px 'DM Sans',sans-serif;letter-spacing:.1em;text-transform:uppercase;transition:transform .3s,background .3s}
 .venue-directions:hover{transform:translateY(-2px);background:var(--ink)}
 .venue-directions:focus-visible{outline:2px solid var(--sand-deep);outline-offset:4px}
-.venue-map{min-width:0;min-height:320px}
-.venue-map iframe{display:block;width:100%;height:100%;min-height:320px;border:0}
-@media(max-width:760px){.venue-card{grid-template-columns:minmax(0,1fr);margin-top:44px}.venue-map,.venue-map iframe{min-height:280px}}
+.venue-map{display:flex;align-items:center;justify-content:center;min-width:0;padding:24px}
+.venue-map iframe{display:block;width:100%;max-width:420px;height:220px;border:0}
+@media(max-width:760px){.venue-card{grid-template-columns:minmax(0,1fr);margin-top:44px}.venue-map{padding:0 20px 20px}.venue-map iframe{height:180px}}
 .family-image{height:auto;aspect-ratio:1.5/1}
 .family-image img{object-fit:contain;background:var(--paper-dark)}
 .countdown-flower{pointer-events:none}
