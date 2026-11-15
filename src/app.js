@@ -8,14 +8,20 @@ const config = {
   couple: "Bharath & Madhushri",
   year: 2026,
   date: "5th & 6th December",
+  venue: {
+    name: "Sri Tirumala Kalyana Mantapa",
+    address: "NH 369, Chitradurga, Kavadigarahatti, Karnataka 577502",
+    directionsUrl: "https://maps.app.goo.gl/M2WxBGpP32XiYhDR6",
+    mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m16!1m11!1m3!1d3!2d76.3742495199002!3d14.218736934903795!2m2!1f0!2f90!3m2!1i1024!2i768!4f75!3m3!1m2!1s0x3bba752716b20417%3A0x1b3e5da89175012e!2sSri%20Tirumala%20Kalyana%20Mantapa!4v1794767340680",
+  },
   gallery: [
     { src: "https://images.unsplash.com/photo-1600118569960-ea0f09f92d5b?auto=format&fit=crop&w=1400&q=85", alt: "A sunlit palace archway" },
     { src: "https://images.unsplash.com/photo-1561042771-abb14f50b8f4?auto=format&fit=crop&w=1400&q=85", alt: "Ornate palace architecture" },
     { src: "https://images.unsplash.com/photo-1699764681875-dd04ce36b1c3?auto=format&fit=crop&w=1400&q=85", alt: "Warm marigold wedding details" },
   ],
   events: [
-    { date: "5th", month: "December", weekday: "Saturday", title: "The Wedding Celebration", time: "Ceremony details coming soon", venue: "Venue to be announced" },
-    { date: "6th", month: "December", weekday: "Sunday", title: "The Grand Reception", time: "Evening celebration", venue: "Venue to be announced" },
+    { date: "5th", month: "December", weekday: "Saturday", title: "Reception", time: "Evening - 7:00 PM onwards" },
+    { date: "6th", month: "December", weekday: "Sunday", title: "Muhurtham", time: "8:40 AM – 9:30 AM" },
   ],
 };
 
@@ -38,7 +44,7 @@ function downloadCalendarInvite() {
     .replace(/,/g, "\\,")
     .replace(/\n/g, "\\n");
   const timestamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
-  const description = "The Wedding Celebration on 5th December and Grand Reception on 6th December. Times and venue to be announced.";
+  const description = "Reception evening: 5 December at 7:00 PM onwards.\nMuhurtha: 6 December, 8:40 AM - 9:30 AM.\nVenue: Sri Tirumala Kalyana Mantapa, NH 369, Chitradurga, Kavadigarahatti, Karnataka 577502.";
   const calendarEvent = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
@@ -84,10 +90,10 @@ function App() {
       <div className="ganesh-mark" aria-hidden="true">ॐ</div><p className="sacred-line">Shri Ganeshaya Namah</p>
       <button className="envelope-button" onClick={() => setOpened(true)} aria-label="Open wedding invitation">
         <span className="envelope-paper"><span className="paper-kicker">A royal invitation</span><span className="paper-names">Bharath<br /><span className="paper-heart" aria-label="and">♥</span><br />Madhushri</span><span className="paper-date">{config.date} · {config.year}</span></span>
-        <span className="envelope-flap" /><span className="wax-seal">✿</span>
+        <span className="envelope-flap" /><span className="wax-seal">❤️</span>
       </button>
       <p className="open-hint"><Sparkles size={14} /> Touch the seal to open</p>
-      <div className="stage-bottom">A celebration of love <span>·</span> Chandigarh, India</div>
+      <div className="stage-bottom">A celebration of love <span>·</span> Karnataka, India</div>
     </section>}
     <AnimatePresence>{opened && <motion.div className="site-content" initial={reducedMotion ? false : { opacity: 0, rotateX: 5, y: 30 }} animate={{ opacity: 1, rotateX: 0, y: 0 }} transition={{ duration: reducedMotion ? 0 : 1.1, ease: [0.22, 1, 0.36, 1] }}>
       <nav className="nav"><a className="monogram" href="#home" aria-label="Bharath and Madhushri home">B<span>✦</span>M</a><div className="nav-links">{[["home", "Our story"], ["celebrations", "Celebrations"], ["gallery", "Gallery"]].map(([id, label]) => <a href={`#${id}`} key={id}>{label}</a>)}</div></nav>
@@ -99,8 +105,48 @@ function App() {
           <div className="hero-photo-wrap" aria-label="Wedding portrait artwork"><div className="hero-photo"><img src="/bouquet.jpg" alt="Bharath and Madhushri together" /></div><div className="photo-caption">The beginning of forever </div></div>
           <span className="hero-side-note">A NEW CHAPTER · 2026</span>
         </section>
-        <section className="intro-section section-pad" id="story"><div className="section-index">01 / OUR STORY</div><Reveal reducedMotion={reducedMotion}><p className="eyebrow">A note from our families</p><h2 className="display-title">A love story,<br /><i>written in the stars.</i></h2><p className="intro-copy">With the blessings of Waheguru and the love of our families, we invite you to join us as we celebrate the beautiful union of Bharath and Madhushri.</p><div className="intro-signature">With love <span>✦</span> Bharath &amp; Madhushri</div></Reveal><div className="intro-seal" aria-hidden="true">B<span>&amp;</span>M</div></section>
-        <section className="celebrations-section section-pad" id="celebrations"><div className="section-index">02 / THE CELEBRATIONS</div><div className="section-heading"><div><p className="eyebrow">Gather with us</p><h2 className="serif-title">Two days.<br /><i>One beginning.</i></h2></div><p className="heading-note">Every moment made more meaningful<br />with the people we love.</p></div><div className="event-timeline">{eventData.map((item, index) => <Reveal reducedMotion={reducedMotion} className={`event-card event-${index}`} key={item.date} delay={index * 0.12}><div className="timeline-node">✦</div><div className="event-date"><strong>{item.date}</strong><span>{item.month}</span><small>{item.weekday}</small></div><div className="event-details"><span className="event-number">0{index + 1} · CHAPTER</span><h3>{item.title}</h3><p>{item.time}</p><p><MapPin size={14} /> {item.venue}</p></div><div className="event-art" aria-hidden="true">{index === 0 ? "I" : "II"}</div></Reveal>)}</div></section>
+        <section className="intro-section section-pad" id="story"><div className="section-index">01 / OUR STORY</div><Reveal reducedMotion={reducedMotion}><p className="eyebrow">A note from our families</p><h2 className="display-title">A love story,<br /><i>written in the stars.</i></h2><p className="intro-copy">With the divine blessings of Lord Shiva and the love and blessings of our families, we joyfully invite you to celebrate the beautiful union of Bharath and Madhushri.</p><div className="intro-signature">With love <span>✦</span> Bharath &amp; Madhushri</div></Reveal><div className="intro-seal" aria-hidden="true"><strong>B<span>&amp;</span>M</strong></div></section>
+        <section className="celebrations-section section-pad" id="celebrations">
+          <div className="section-index">02 / THE CELEBRATIONS</div>
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">Gather with us</p>
+              <h2 className="serif-title">Two days.<br /><i>One beginning.</i></h2>
+            </div>
+            <p className="heading-note">Every moment made more meaningful<br />with the people we love.</p>
+          </div>
+          <div className="event-timeline">
+            {eventData.map((item, index) => <Reveal reducedMotion={reducedMotion} className={`event-card event-${index}`} key={item.date} delay={index * 0.12}>
+              <div className="timeline-node">✦</div>
+              <div className="event-date"><strong>{item.date}</strong><span>{item.month}</span><small>{item.weekday}</small></div>
+              <div className="event-details">
+                <span className="event-number">0{index + 1} · CHAPTER</span>
+                <h3>{item.title}</h3>
+                <p>{item.time}</p>
+              </div>
+              <div className="event-art" aria-hidden="true">{index === 0 ? "I" : "II"}</div>
+            </Reveal>)}
+          </div>
+          <div className="venue-card">
+            <div className="venue-copy">
+              <p className="eyebrow">Our venue</p>
+              <h3>{config.venue.name}</h3>
+              <p className="venue-address">{config.venue.address}</p>
+              <a className="venue-directions" href={config.venue.directionsUrl} target="_blank" rel="noreferrer">
+                <MapPin size={15} /> Get directions <ArrowUpRight size={14} />
+              </a>
+            </div>
+            <div className="venue-map">
+              <iframe
+                src={config.venue.mapEmbedUrl}
+                title={`Map to ${config.venue.name}`}
+                loading="lazy"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        </section>
         <section className="family-section section-pad"><div className="section-index">03 / OUR FAMILIES</div><Reveal reducedMotion={reducedMotion}><p className="eyebrow">Two families, one home</p><h2 className="serif-title">The soul synced <i>two.</i></h2></Reveal><div className="family-grid">{[{ label: "The bride's family", image: config.gallery[1] }, { label: "The groom's family", image: config.gallery[2] }].map((family, index) => <Reveal reducedMotion={reducedMotion} className="family-card" key={family.label} delay={index * .1}><div className="family-image"><img src={family.image.src} alt={family.image.alt} loading="lazy" /></div><p>{family.label}</p><span>With love and blessings</span></Reveal>)}</div><div className="family-ampersand" aria-hidden="true">&amp;</div></section>
         <section className="gallery-section section-pad" id="gallery"><div className="section-index">04 / MOMENTS TO KEEP</div><div className="section-heading"><div><p className="eyebrow">A glimpse of the feeling</p><h2 className="serif-title">Frames from<br /><i>our story.</i></h2></div><p className="heading-note">Little moments, lasting memories.</p></div><div className="gallery-grid">{config.gallery.map((image, index) => <motion.button className={`gallery-item gallery-${index}`} whileHover={reducedMotion ? undefined : { rotateY: index === 1 ? -4 : 4, rotateX: -3, scale: 1.025, z: 28 }} onClick={() => setLightbox(image)} key={image.src} aria-label={`View photo: ${image.alt}`}><img src={image.src} alt={image.alt} loading="lazy" /><span>0{index + 1} <ArrowUpRight size={13} /></span></motion.button>)}</div></section>
         <section className="countdown-section section-pad"><Reveal reducedMotion={reducedMotion}><div className="countdown-flower" aria-hidden="true">✺</div><p className="eyebrow">Until we meet beneath the lights</p><h2 className="script-title">Counting down to forever</h2><Countdown /><p className="countdown-date">5th December 2026 · India Standard Time</p><button className="calendar-button" type="button" onClick={downloadCalendarInvite}><CalendarDays size={16} /> Add to calendar</button></Reveal></section>
