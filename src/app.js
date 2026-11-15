@@ -120,7 +120,7 @@ function App() {
     return () => query.removeEventListener?.("change", update);
   }, []);
 
-  return <div className="site-shell">
+  return <div className="site-shell"><main>
     {!opened && <section className="envelope-stage" aria-label="Wedding invitation">
       <div className="ambient-orb orb-one" /><div className="ambient-orb orb-two" />
       <div className="ganesh-mark" aria-hidden="true">ॐ</div><p className="sacred-line">Shri Ganeshaya Namah</p>
@@ -132,8 +132,7 @@ function App() {
       <div className="stage-bottom">A celebration of love <span>·</span> Karnataka, India</div>
     </section>}
     <AnimatePresence>{opened && <motion.div className="site-content" initial={reducedMotion ? false : { opacity: 0, rotateX: 5, y: 30 }} animate={{ opacity: 1, rotateX: 0, y: 0 }} transition={{ duration: reducedMotion ? 0 : 1.1, ease: [0.22, 1, 0.36, 1] }}>
-      <nav className="nav"><a className="monogram" href="#home" aria-label="Bharath and Madhushri home">B<span>✦</span>M</a><div className="nav-links">{[["home", "Our story"], ["celebrations", "Celebrations"], ["gallery", "Gallery"]].map(([id, label]) => <a href={`#${id}`} key={id}>{label}</a>)}</div></nav>
-      <main>
+      <nav className="nav"><a className="monogram" href="#home" aria-label="BM — Bharath and Madhushri home">B<span aria-hidden="true">✦</span>M</a><div className="nav-links">{[["home", "Our story"], ["celebrations", "Celebrations"], ["gallery", "Gallery"]].map(([id, label]) => <a href={`#${id}`} key={id}>{label}</a>)}</div></nav>
         <section className="hero-section" id="home">
           <div className="hero-backdrop" />
           <div className="hero-ornament ornament-left" aria-hidden="true">✺</div>          <span className="mandala-symbol" aria-hidden="true"></span><div className="hero-blessing"><img className="ganesha-image" src="/ganesha.png" alt="" /><p className="eyebrow">With the blessings of our families</p></div><div className="hero-ornament ornament-right" aria-hidden="true"></div>
@@ -180,11 +179,11 @@ function App() {
           </div>
         </section>
         <section className="family-section section-pad"><div className="section-index">03 / OUR FAMILIES</div><Reveal reducedMotion={reducedMotion}><p className="eyebrow">Two families, one home</p><h2 className="serif-title">The soul synced <i>two.</i></h2></Reveal><div className="family-grid">{[{ label: "The groom's family", image: { src: "/groomfam.jpeg", alt: "Bharath and Madhushri with the groom's family" } }, { label: "The bride's family", image: { src: "/bridefam.jpeg", alt: "Bharath and Madhushri with the bride's family" }}].map((family, index) => <Reveal reducedMotion={reducedMotion} className="family-card" key={family.label} delay={index * .1}><div className="family-image"><img src={family.image.src} alt={family.image.alt} loading="lazy" /></div><p>{family.label}</p><span>With love and blessings</span></Reveal>)}</div><div className="family-ampersand" aria-hidden="true">&amp;</div></section>
-        <section className="gallery-section section-pad" id="gallery"><div className="section-index">04 / MOMENTS TO KEEP</div><div className="section-heading"><div><p className="eyebrow">A glimpse of the feeling</p><h2 className="serif-title">Frames from<br /><i>our story.</i></h2></div><p className="heading-note">Little moments, lasting memories.</p></div><div className="gallery-grid">{config.gallery.map((image, index) => <motion.button className={`gallery-item gallery-${index}`} whileHover={reducedMotion ? undefined : { rotateY: index === 1 ? -4 : 4, rotateX: -3, scale: 1.025, z: 28 }} onClick={() => setLightbox(image)} key={image.src} aria-label={`View photo: ${image.alt}`}><img src={image.src} alt={image.alt} loading="lazy" /><span>0{index + 1} <ArrowUpRight size={13} /></span></motion.button>)}</div></section>
+        <section className="gallery-section section-pad" id="gallery"><div className="section-index">04 / MOMENTS TO KEEP</div><div className="section-heading"><div><p className="eyebrow">A glimpse of the feeling</p><h2 className="serif-title">Frames from<br /><i>our story.</i></h2></div><p className="heading-note">Little moments, lasting memories.</p></div><div className="gallery-grid">{config.gallery.map((image, index) => <motion.button className={`gallery-item gallery-${index}`} whileHover={reducedMotion ? undefined : { rotateY: index === 1 ? -4 : 4, rotateX: -3, scale: 1.025, z: 28 }} onClick={() => setLightbox(image)} key={image.src} aria-label={`0${index + 1} View photo: ${image.alt}`}><img src={image.src} alt={image.alt} loading="lazy" /><span>0{index + 1} <ArrowUpRight size={13} /></span></motion.button>)}</div></section>
         <section className="countdown-section section-pad"><Reveal reducedMotion={reducedMotion}><div className="countdown-flower" aria-hidden="true">✺</div><p className="eyebrow">Until we meet beneath the lights</p><h2 className="script-title">Counting down to forever</h2><Countdown /><p className="countdown-date">5th December 2026 · India Standard Time</p><button className="calendar-button" type="button" onClick={handleCalendarInvite}><CalendarDays size={16} /> Add to calendar</button></Reveal></section>
         <footer className="footer"><div className="footer-mark">B<span>✦</span>M</div><p className="eyebrow">With love and blessings</p><h2 className="script-title">Bharath <i>&amp;</i> Madhushri</h2><p>Two hearts. One forever.</p><span className="footer-date">5th & 6th December · 2026</span><Music2 size={15} className="footer-note" /></footer>
-      </main>
     </motion.div>}</AnimatePresence>
+    </main>
     {calendarHelpOpen && <div className="calendar-help-overlay">
       <section className="calendar-help-dialog" role="dialog" aria-modal="true" aria-labelledby="calendar-help-title" aria-describedby="calendar-help-copy">
         <h2 id="calendar-help-title">Add the invitation to your calendar</h2>
@@ -207,7 +206,7 @@ function App() {
     />
     {opened && <div className="music-control">
       <button className={`music-disc${musicPlaying ? " is-playing" : ""}`} type="button" onClick={toggleMusic} aria-pressed={musicPlaying} aria-label={musicPlaying ? "Pause wedding music" : "Play wedding music"}>
-        <span className="music-disc-mark">B<span aria-hidden="true">🎵</span>M</span>
+        <span className="music-disc-mark" aria-hidden="true">B<span>🎵</span>M</span>
         <span className="music-bars" aria-hidden="true"><i /><i /><i /><i /><i /></span>
         <span className="music-action-icon" aria-hidden="true">{musicPlaying ? <Pause size={12} /> : <Play size={12} />}</span>
       </button>
