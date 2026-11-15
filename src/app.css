@@ -266,3 +266,5 @@
 .music-action-icon{position:absolute;right:-2px;bottom:-2px;display:grid;place-items:center;width:22px;height:22px;border:1px solid rgba(255,248,234,.8);border-radius:50%;background:var(--ink);color:var(--white)}
 @keyframes music-bar-pulse{to{height:9px}}
 .music-control [role=alert]{margin:0;padding:9px 12px;background:var(--paper);color:var(--ink);box-shadow:0 4px 16px rgba(27,20,14,.18);font-size:14px}
+[aria-hidden="true"],svg,.paper-heart,.wax-seal,.protected-photo{-webkit-user-select:none;user-select:none}
+.protected-photo{-webkit-user-drag:none}
