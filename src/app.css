@@ -219,3 +219,4 @@
 @media(max-width:760px){.venue-card{grid-template-columns:minmax(0,1fr);margin-top:44px}.venue-map,.venue-map iframe{min-height:280px}}
 .family-image{height:auto;aspect-ratio:1.5/1}
 .family-image img{object-fit:contain;background:var(--paper-dark)}
+.countdown-flower{pointer-events:none}
