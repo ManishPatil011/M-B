@@ -74,8 +74,13 @@ function downloadCalendarInvite() {
 function App() {
   const [opened, setOpened] = useState(false);
   const [lightbox, setLightbox] = useState(null);
+  const [calendarHelpOpen, setCalendarHelpOpen] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const eventData = useMemo(() => config.events, []);
+  const handleCalendarInvite = () => {
+    downloadCalendarInvite();
+    setCalendarHelpOpen(true);
+  };
 
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -145,10 +150,17 @@ function App() {
         </section>
         <section className="family-section section-pad"><div className="section-index">03 / OUR FAMILIES</div><Reveal reducedMotion={reducedMotion}><p className="eyebrow">Two families, one home</p><h2 className="serif-title">The soul synced <i>two.</i></h2></Reveal><div className="family-grid">{[{ label: "The groom's family", image: { src: "/groomfam.jpeg", alt: "Bharath and Madhushri with the groom's family" } }, { label: "The bride's family", image: { src: "/bridefam.jpeg", alt: "Bharath and Madhushri with the bride's family" }}].map((family, index) => <Reveal reducedMotion={reducedMotion} className="family-card" key={family.label} delay={index * .1}><div className="family-image"><img src={family.image.src} alt={family.image.alt} loading="lazy" /></div><p>{family.label}</p><span>With love and blessings</span></Reveal>)}</div><div className="family-ampersand" aria-hidden="true">&amp;</div></section>
         <section className="gallery-section section-pad" id="gallery"><div className="section-index">04 / MOMENTS TO KEEP</div><div className="section-heading"><div><p className="eyebrow">A glimpse of the feeling</p><h2 className="serif-title">Frames from<br /><i>our story.</i></h2></div><p className="heading-note">Little moments, lasting memories.</p></div><div className="gallery-grid">{config.gallery.map((image, index) => <motion.button className={`gallery-item gallery-${index}`} whileHover={reducedMotion ? undefined : { rotateY: index === 1 ? -4 : 4, rotateX: -3, scale: 1.025, z: 28 }} onClick={() => setLightbox(image)} key={image.src} aria-label={`View photo: ${image.alt}`}><img src={image.src} alt={image.alt} loading="lazy" /><span>0{index + 1} <ArrowUpRight size={13} /></span></motion.button>)}</div></section>
-        <section className="countdown-section section-pad"><Reveal reducedMotion={reducedMotion}><div className="countdown-flower" aria-hidden="true">✺</div><p className="eyebrow">Until we meet beneath the lights</p><h2 className="script-title">Counting down to forever</h2><Countdown /><p className="countdown-date">5th December 2026 · India Standard Time</p><button className="calendar-button" type="button" onClick={downloadCalendarInvite}><CalendarDays size={16} /> Add to calendar</button></Reveal></section>
+        <section className="countdown-section section-pad"><Reveal reducedMotion={reducedMotion}><div className="countdown-flower" aria-hidden="true">✺</div><p className="eyebrow">Until we meet beneath the lights</p><h2 className="script-title">Counting down to forever</h2><Countdown /><p className="countdown-date">5th December 2026 · India Standard Time</p><button className="calendar-button" type="button" onClick={handleCalendarInvite}><CalendarDays size={16} /> Add to calendar</button></Reveal></section>
         <footer className="footer"><div className="footer-mark">B<span>✦</span>M</div><p className="eyebrow">With love and blessings</p><h2 className="script-title">Bharath <i>&amp;</i> Madhushri</h2><p>Two hearts. One forever.</p><span className="footer-date">5th & 6th December · 2026</span><Music2 size={15} className="footer-note" /></footer>
       </main>
     </motion.div>}</AnimatePresence>
+    {calendarHelpOpen && <div className="calendar-help-overlay">
+      <section className="calendar-help-dialog" role="dialog" aria-modal="true" aria-labelledby="calendar-help-title" aria-describedby="calendar-help-copy">
+        <h2 id="calendar-help-title">Add the invitation to your calendar</h2>
+        <p id="calendar-help-copy">The .ics file is downloading. Once it’s ready, open it from Downloads and choose “Add to Calendar” or “Import” in your calendar app. Confirm when prompted.</p>
+        <button type="button" autoFocus onClick={() => setCalendarHelpOpen(false)}>OK</button>
+      </section>
+    </div>}
     {lightbox && <div className="lightbox" role="dialog" aria-modal="true" aria-label={lightbox.alt} onClick={() => setLightbox(null)}><button onClick={() => setLightbox(null)} aria-label="Close image"><X /></button><img src={lightbox.src} alt={lightbox.alt} /></div>}
   </div>;
 }
