@@ -206,7 +206,7 @@ function App() {
     />
     {opened && <div className="music-control">
       <button className={`music-disc${musicPlaying ? " is-playing" : ""}`} type="button" onClick={toggleMusic} aria-pressed={musicPlaying} aria-label={musicPlaying ? "Pause wedding music" : "Play wedding music"}>
-        <span className="music-disc-mark" aria-hidden="true">B<span>🎵</span>M</span>
+        <span className="music-disc-mark" aria-hidden="true"><span>🎵</span></span>
         <span className="music-bars" aria-hidden="true"><i /><i /><i /><i /><i /></span>
         <span className="music-action-icon" aria-hidden="true">{musicPlaying ? <Pause size={12} /> : <Play size={12} />}</span>
       </button>
