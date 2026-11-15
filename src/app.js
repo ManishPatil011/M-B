@@ -7,15 +7,15 @@ import "@/entrance.css";
 const config = {
   couple: "Bharath & Madhushri",
   year: 2026,
-  date: "05 — 06 December",
+  date: "5th & 6th December",
   gallery: [
     { src: "https://images.unsplash.com/photo-1600118569960-ea0f09f92d5b?auto=format&fit=crop&w=1400&q=85", alt: "A sunlit palace archway" },
     { src: "https://images.unsplash.com/photo-1561042771-abb14f50b8f4?auto=format&fit=crop&w=1400&q=85", alt: "Ornate palace architecture" },
     { src: "https://images.unsplash.com/photo-1699764681875-dd04ce36b1c3?auto=format&fit=crop&w=1400&q=85", alt: "Warm marigold wedding details" },
   ],
   events: [
-    { date: "05", month: "December", weekday: "Saturday", title: "The Wedding Celebration", time: "Ceremony details coming soon", venue: "Venue to be announced" },
-    { date: "06", month: "December", weekday: "Sunday", title: "The Grand Reception", time: "Evening celebration", venue: "Venue to be announced" },
+    { date: "5th", month: "December", weekday: "Saturday", title: "The Wedding Celebration", time: "Ceremony details coming soon", venue: "Venue to be announced" },
+    { date: "6th", month: "December", weekday: "Sunday", title: "The Grand Reception", time: "Evening celebration", venue: "Venue to be announced" },
   ],
 };
 
@@ -38,7 +38,7 @@ function downloadCalendarInvite() {
     .replace(/,/g, "\\,")
     .replace(/\n/g, "\\n");
   const timestamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
-  const description = "The Wedding Celebration on 5 December and Grand Reception on 6 December. Times and venue to be announced.";
+  const description = "The Wedding Celebration on 5th December and Grand Reception on 6th December. Times and venue to be announced.";
   const calendarEvent = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
@@ -83,7 +83,7 @@ function App() {
       <div className="ambient-orb orb-one" /><div className="ambient-orb orb-two" />
       <div className="ganesh-mark" aria-hidden="true">ॐ</div><p className="sacred-line">Shri Ganeshaya Namah</p>
       <button className="envelope-button" onClick={() => setOpened(true)} aria-label="Open wedding invitation">
-        <span className="envelope-paper"><span className="paper-kicker">A royal invitation</span><span className="paper-names">Bharath<br /><i>&amp;</i><br />Madhushri</span><span className="paper-date">{config.date} · {config.year}</span></span>
+        <span className="envelope-paper"><span className="paper-kicker">A royal invitation</span><span className="paper-names">Bharath<br /><span className="paper-heart" aria-label="and">♥</span><br />Madhushri</span><span className="paper-date">{config.date} · {config.year}</span></span>
         <span className="envelope-flap" /><span className="wax-seal">✿</span>
       </button>
       <p className="open-hint"><Sparkles size={14} /> Touch the seal to open</p>
@@ -95,7 +95,7 @@ function App() {
         <section className="hero-section" id="home">
           <div className="hero-backdrop" />
           <div className="hero-ornament ornament-left" aria-hidden="true">✺</div>          <span className="mandala-symbol" aria-hidden="true"></span><div className="hero-blessing"><img className="ganesha-image" src="/ganesha.png" alt="" /><p className="eyebrow">With the blessings of our families</p></div><div className="hero-ornament ornament-right" aria-hidden="true"></div>
-          <Reveal reducedMotion={reducedMotion} className="hero-intro"><h1>Bharath <i>&amp;</i><br />Madhushri</h1><p className="hero-caption">Two hearts, one beautiful beginning.</p><div className="hero-date"><CalendarDays size={15} /> 05 — 06 December · 2026</div><a className="outline-link" href="#story">Discover our invitation <ArrowDown size={14} /></a></Reveal>
+          <Reveal reducedMotion={reducedMotion} className="hero-intro"><h1>Bharath <span className="hero-heart" aria-label="and">♥</span><br />Madhushri</h1><p className="hero-caption">Two hearts, one beautiful beginning.</p><div className="hero-date"><CalendarDays size={15} /> 5th & 6th December · 2026</div><a className="outline-link" href="#story">Discover our invitation <ArrowDown size={14} /></a></Reveal>
           <div className="hero-photo-wrap" aria-label="Wedding portrait artwork"><div className="hero-photo"><img src={config.gallery[0].src} alt={config.gallery[0].alt} /></div><div className="photo-caption">The beginning of forever <span>· 01</span></div></div>
           <span className="hero-side-note">A NEW CHAPTER · 2026</span>
         </section>
@@ -103,8 +103,8 @@ function App() {
         <section className="celebrations-section section-pad" id="celebrations"><div className="section-index">02 / THE CELEBRATIONS</div><div className="section-heading"><div><p className="eyebrow">Gather with us</p><h2 className="serif-title">Two days.<br /><i>One beginning.</i></h2></div><p className="heading-note">Every moment made more meaningful<br />with the people we love.</p></div><div className="event-timeline">{eventData.map((item, index) => <Reveal reducedMotion={reducedMotion} className={`event-card event-${index}`} key={item.date} delay={index * 0.12}><div className="timeline-node">✦</div><div className="event-date"><strong>{item.date}</strong><span>{item.month}</span><small>{item.weekday}</small></div><div className="event-details"><span className="event-number">0{index + 1} · CHAPTER</span><h3>{item.title}</h3><p>{item.time}</p><p><MapPin size={14} /> {item.venue}</p></div><div className="event-art" aria-hidden="true">{index === 0 ? "I" : "II"}</div></Reveal>)}</div></section>
         <section className="family-section section-pad"><div className="section-index">03 / OUR FAMILIES</div><Reveal reducedMotion={reducedMotion}><p className="eyebrow">Two families, one home</p><h2 className="serif-title">The soul synced <i>two.</i></h2></Reveal><div className="family-grid">{[{ label: "The bride's family", image: config.gallery[1] }, { label: "The groom's family", image: config.gallery[2] }].map((family, index) => <Reveal reducedMotion={reducedMotion} className="family-card" key={family.label} delay={index * .1}><div className="family-image"><img src={family.image.src} alt={family.image.alt} loading="lazy" /></div><p>{family.label}</p><span>With love and blessings</span></Reveal>)}</div><div className="family-ampersand" aria-hidden="true">&amp;</div></section>
         <section className="gallery-section section-pad" id="gallery"><div className="section-index">04 / MOMENTS TO KEEP</div><div className="section-heading"><div><p className="eyebrow">A glimpse of the feeling</p><h2 className="serif-title">Frames from<br /><i>our story.</i></h2></div><p className="heading-note">Little moments, lasting memories.</p></div><div className="gallery-grid">{config.gallery.map((image, index) => <motion.button className={`gallery-item gallery-${index}`} whileHover={reducedMotion ? undefined : { rotateY: index === 1 ? -4 : 4, rotateX: -3, scale: 1.025, z: 28 }} onClick={() => setLightbox(image)} key={image.src} aria-label={`View photo: ${image.alt}`}><img src={image.src} alt={image.alt} loading="lazy" /><span>0{index + 1} <ArrowUpRight size={13} /></span></motion.button>)}</div></section>
-        <section className="countdown-section section-pad"><Reveal reducedMotion={reducedMotion}><div className="countdown-flower" aria-hidden="true">✺</div><p className="eyebrow">Until we meet beneath the lights</p><h2 className="script-title">Counting down to forever</h2><Countdown /><p className="countdown-date">05 December 2026 · India Standard Time</p><button className="calendar-button" type="button" onClick={downloadCalendarInvite}><CalendarDays size={16} /> Add to calendar</button></Reveal></section>
-        <footer className="footer"><div className="footer-mark">B<span>✦</span>M</div><p className="eyebrow">With love and blessings</p><h2 className="script-title">Bharath <i>&amp;</i> Madhushri</h2><p>Two hearts. One forever.</p><span className="footer-date">05 — 06 December · 2026</span><Music2 size={15} className="footer-note" /></footer>
+        <section className="countdown-section section-pad"><Reveal reducedMotion={reducedMotion}><div className="countdown-flower" aria-hidden="true">✺</div><p className="eyebrow">Until we meet beneath the lights</p><h2 className="script-title">Counting down to forever</h2><Countdown /><p className="countdown-date">5th December 2026 · India Standard Time</p><button className="calendar-button" type="button" onClick={downloadCalendarInvite}><CalendarDays size={16} /> Add to calendar</button></Reveal></section>
+        <footer className="footer"><div className="footer-mark">B<span>✦</span>M</div><p className="eyebrow">With love and blessings</p><h2 className="script-title">Bharath <i>&amp;</i> Madhushri</h2><p>Two hearts. One forever.</p><span className="footer-date">5th & 6th December · 2026</span><Music2 size={15} className="footer-note" /></footer>
       </main>
     </motion.div>}</AnimatePresence>
     {lightbox && <div className="lightbox" role="dialog" aria-modal="true" aria-label={lightbox.alt} onClick={() => setLightbox(null)}><button onClick={() => setLightbox(null)} aria-label="Close image"><X /></button><img src={lightbox.src} alt={lightbox.alt} /></div>}

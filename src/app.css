@@ -202,3 +202,5 @@
 .envelope-button .envelope-flap{clip-path:polygon(0 0,100% 0,50% 53%)}
 .envelope-button .wax-seal{top:53%}
 .envelope-button:hover .envelope-flap{transform:rotateX(12deg)}
+.hero-heart{display:inline-block;margin:0 .12em;color:var(--gold);font-size:.48em;line-height:1;vertical-align:.18em;text-shadow:0 4px 10px rgba(100,67,40,.2);transform:rotate(-8deg)}
+.paper-heart{color:var(--gold);font-size:.66em;line-height:1}
