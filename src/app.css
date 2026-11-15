@@ -194,3 +194,11 @@
 .calendar-button{display:inline-flex;align-items:center;justify-content:center;gap:9px;margin:24px auto 0;padding:13px 20px;border:1px solid var(--gold);border-radius:99px;background:var(--sand-deep);color:var(--white);font:10px 'DM Sans',sans-serif;letter-spacing:.1em;text-transform:uppercase;transition:transform .3s,background .3s}
 .calendar-button:hover{transform:translateY(-2px);background:var(--ink)}
 .calendar-button:focus-visible{outline:2px solid var(--sand-deep);outline-offset:4px}
+
+/* Keep a clean sheet tucked inside the closed envelope; reveal invitation copy only after opening. */
+.envelope-paper{inset:4% 8% 7%;z-index:1;transform:translateZ(-10px);overflow:hidden}
+.envelope-paper>*{display:none}
+.envelope-button:before{content:"";position:absolute;inset:0;z-index:2;background:linear-gradient(145deg,#b69b79,#927657);clip-path:polygon(0 18%,50% 58%,100% 18%,100% 100%,0 100%);filter:drop-shadow(0 5px 5px rgba(54,36,19,.18))}
+.envelope-button .envelope-flap{clip-path:polygon(0 0,100% 0,50% 53%)}
+.envelope-button .wax-seal{top:53%}
+.envelope-button:hover .envelope-flap{transform:rotateX(12deg)}
