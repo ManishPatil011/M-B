@@ -146,7 +146,7 @@
 
 .hero-intro{display:flex;flex-direction:column;align-items:flex-start;width:min(100%,560px);max-width:560px;min-width:0}
 .hero-intro .eyebrow{margin:0 0 clamp(18px,2.2vw,28px);font-size:clamp(9px,.8vw,11px);letter-spacing:.22em;line-height:1.6}
-.hero-intro h1{margin:0;font-size:clamp(64px,7vw,104px);line-height:.82;letter-spacing:-.05em}
+.hero-intro h1{margin:0;font-size:clamp(40px,4.6vw,64px);line-height:1.04;letter-spacing:-.04em;white-space:nowrap}
 .hero-intro .hero-caption{max-width:34ch;margin:clamp(18px,2vw,25px) 0 0;font-size:clamp(18px,1.7vw,22px);line-height:1.45;letter-spacing:.01em}
 .hero-intro .hero-date{width:max-content;max-width:100%;margin:24px 0 27px;padding-top:14px;border-top:1px solid rgba(255,250,241,.3);font-size:10px;letter-spacing:.14em;line-height:1.6}
 .hero-intro .outline-link{min-height:46px;margin:0;padding:14px 20px;background:rgba(255,250,241,.06)}
@@ -154,7 +154,7 @@
 
 @media (max-width: 760px) {
   .hero-intro{align-items:center;text-align:center}
-  .hero-intro h1{font-size:clamp(54px,11vw,76px)}
+  .hero-intro h1{font-size:clamp(28px,7.2vw,48px)}
   .hero-intro .hero-caption{max-width:36ch}
   .hero-intro .hero-date{width:auto;justify-content:center}
   .hero-intro .outline-link{margin-inline:auto}
@@ -162,11 +162,11 @@
 }
 
 @media (max-width: 480px) {
-  .hero-intro h1{font-size:clamp(50px,13vw,62px)}
+  .hero-intro h1{font-size:clamp(27px,7.4vw,36px)}
 }
 
 @media (max-width: 380px) {
-  .hero-intro h1{font-size:clamp(48px,13vw,52px)}
+  .hero-intro h1{font-size:clamp(24px,7vw,27px)}
 }
 
 .hero-section .hero-blessing{position:absolute;top:clamp(30px,5vw,52px);left:clamp(30px,5vw,52px);z-index:2;display:flex;align-items:center;gap:14px;max-width:min(440px,calc(100% - 104px))}
@@ -194,3 +194,14 @@
 .calendar-button{display:inline-flex;align-items:center;justify-content:center;gap:9px;margin:24px auto 0;padding:13px 20px;border:1px solid var(--gold);border-radius:99px;background:var(--sand-deep);color:var(--white);font:10px 'DM Sans',sans-serif;letter-spacing:.1em;text-transform:uppercase;transition:transform .3s,background .3s}
 .calendar-button:hover{transform:translateY(-2px);background:var(--ink)}
 .calendar-button:focus-visible{outline:2px solid var(--sand-deep);outline-offset:4px}
+
+/* Keep a clean sheet tucked inside the closed envelope; reveal invitation copy only after opening. */
+.envelope-paper{inset:4% 8% 7%;z-index:1;transform:translateZ(-10px);overflow:hidden}
+.envelope-paper>*{display:none}
+.envelope-button:before{content:"";position:absolute;inset:0;z-index:2;background:linear-gradient(145deg,#b69b79,#927657);clip-path:polygon(0 18%,50% 58%,100% 18%,100% 100%,0 100%);filter:drop-shadow(0 5px 5px rgba(54,36,19,.18))}
+.envelope-button .envelope-flap{clip-path:polygon(0 0,100% 0,50% 53%)}
+.envelope-button .wax-seal{top:53%}
+.envelope-button:hover .envelope-flap{transform:rotateX(12deg)}
+.bouquet-type{background-position:center;background-size:cover;background-clip:text;-webkit-background-clip:text;color:#7b1824;-webkit-text-fill-color:transparent;-webkit-text-stroke:1.2px rgba(64,12,20,.86);paint-order:stroke fill;text-shadow:0 1px 3px rgba(40,11,14,.2)}
+.hero-heart{display:inline-block;margin:0 .08em;color:var(--gold);font-size:.6em;line-height:1;vertical-align:.08em;-webkit-text-fill-color:var(--gold);-webkit-text-stroke:0;text-shadow:0 3px 8px rgba(100,67,40,.25)}
+.paper-heart{color:var(--gold);font-size:.66em;line-height:1}
