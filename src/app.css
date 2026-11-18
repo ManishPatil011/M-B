@@ -274,4 +274,6 @@
 .footer-credit a:focus-visible{outline:2px solid var(--white);outline-offset:4px}
 @media(max-width:520px){.footer{padding-bottom:70px}.footer>.footer-credit{right:12px;bottom:12px;max-width:calc(100% - 24px);font-size:8px}}
 [aria-hidden="true"],svg,.paper-heart,.wax-seal,.protected-photo{-webkit-user-select:none;user-select:none}
-.protected-photo{-webkit-user-drag:none}
+.protected-photo{-webkit-user-drag:none;opacity:0;background-color:var(--paper-dark);background-image:linear-gradient(100deg,#e7dece 20%,#f8f2e7 38%,#e7dece 56%);background-size:200% 100%;animation:photo-loading-shimmer 1.4s ease-in-out infinite;transition:opacity .45s ease}
+.protected-photo.is-loaded{opacity:1;background-image:none;animation:none}
+@keyframes photo-loading-shimmer{to{background-position:-200% 0}}

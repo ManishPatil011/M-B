@@ -10,7 +10,7 @@ const config = {
   date: "5th & 6th December",
   venue: {
     name: "Sri Tirumala Kalyana Mantapa",
-    address: "NH 369, Chitradurga, Kavadigarahatti, Karnataka 577502",
+    address: "NH 369, Near Malappanahatti circle, Chitradurga, Karnataka 577502",
     directionsUrl: "https://maps.app.goo.gl/M2WxBGpP32XiYhDR6",
     mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m16!1m11!1m3!1d3!2d76.3742495199002!3d14.218736934903795!2m2!1f0!2f90!3m2!1i1024!2i768!4f75!3m3!1m2!1s0x3bba752716b20417%3A0x1b3e5da89175012e!2sSri%20Tirumala%20Kalyana%20Mantapa!4v1794767340680",
   },
@@ -38,12 +38,15 @@ function Reveal({ children, className = "", reducedMotion = false, delay = 0 }) 
 }
 
 function ProtectedPhoto({ src, alt, loading }) {
+  const [loaded, setLoaded] = useState(false);
   const preventPhotoAction = (event) => event.preventDefault();
   return <img
-    className="protected-photo"
+    className={`protected-photo${loaded ? " is-loaded" : ""}`}
     src={src}
     alt={alt}
     loading={loading}
+    onLoad={() => setLoaded(true)}
+    onError={() => setLoaded(true)}
     draggable={false}
     onContextMenu={preventPhotoAction}
     onCopy={preventPhotoAction}
