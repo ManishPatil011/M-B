@@ -1,58 +1,103 @@
-Getting Started with Create React App
-This project was bootstrapped with Create React App.
+# Bharath & Madhushri Wedding Invitation
 
-Available Scripts
-In the project directory, you can run:
+A responsive wedding invitation website for the celebration of Bharath and Madhushri on 5-6 December 2026.
 
-npm start
-Runs the app in the development mode.
-Open http://localhost:3000 to view it in your browser.
+## Features
 
-The page will reload when you make changes.
-You may also see any lint errors in the console.
+- Interactive opening envelope and optional wedding music
+- Wedding countdown for 5 December 2026
+- Reception and Muhurtham schedule
+- Venue details with an embedded Google Map
+- Family and gallery photo sections
+- Downloadable `.ics` calendar invitation
+- Responsive layout, reduced-motion support, and protected gallery images
+- Animated transitions powered by Framer Motion
 
-npm test
-Launches the test runner in the interactive watch mode.
-See the section about running tests for more information.
+## Tech Stack
 
+- React 19
+- Create React App with CRACO
+- Tailwind CSS
+- Framer Motion
+- Radix UI
+- Lucide React
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18 or newer
+- npm 9 or newer
+
+### Installation
+
+```powershell
+npm install
+```
+
+### Start the Development Server
+
+```powershell
+npm run dev
+```
+
+Open `http://localhost:3000`. The page reloads automatically when source files change.
+
+You can also use `npm start`.
+
+## Available Scripts
+
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the development server |
+| `npm start` | Start the development server |
+| `npm test` | Run tests in watch mode |
+| `npm run build` | Create the optimized production build in `build/` |
+
+## Customizing the Invitation
+
+The main event details are defined in `src/app.js`:
+
+- Couple name and year
+- Event dates and times
+- Venue name, address, directions, and map URL
+- Gallery images
+
+Wedding photos and audio are stored in `public/` and can be replaced with files that use the same names.
+
+```text
+public/
+├── music.mp3
+├── ganesha.png
+├── bouquet.jpg
+├── groomfam.jpeg
+├── bridefam.jpeg
+└── <gallery and monogram images>
+```
+
+## Production Build
+
+```powershell
 npm run build
-Builds the app for production to the build folder.
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```
 
-The build is minified and the filenames include the hashes.
-Your app is ready to be deployed!
+Deploy the contents of the generated `build/` directory to any static web host, such as GitHub Pages, Netlify, or Vercel.
 
-See the section about deployment for more information.
+Because the app uses public-root asset paths, configure the host at the domain root or set the appropriate base path before deployment.
 
-npm run eject
-Note: this is a one-way operation. Once you eject, you can't go back!
+## Project Structure
 
-If you aren't satisfied with the build tool and configuration choices, you can eject at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except eject will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use eject. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-Learn More
-You can learn more in the Create React App documentation.
-
-To learn React, check out the React documentation.
-
-Code Splitting
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-Analyzing the Bundle Size
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-Making a Progressive Web App
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-Advanced Configuration
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-Deployment
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-npm run build fails to minify
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
-
+```text
+public/                 Static images, map and audio assets
+src/
+├── app.js              Invitation content and application components
+├── app.css             Application styles
+├── entrance.css        Opening-envelope styles
+├── index.css           Global styles
+├── components/ui/      Reusable UI components
+├── constants/          Test identifiers
+├── hooks/              React hooks
+└── lib/                Shared utilities
+craco.config.js         CRA/CRACO and webpack configuration
+tailwind.config.js      Tailwind configuration
+```
