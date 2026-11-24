@@ -1,4 +1,4 @@
-# Bharath & Madhushri Wedding Invitation
+# Wedding Invitation
 
 A responsive wedding invitation website for the celebration of Bharath and Madhushri on 5-6 December 2026.
 
